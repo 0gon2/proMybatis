@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ldg.mybatis">
+	<select id="getMessageNum" resultType="int" parameterType="Message">
+		 select nvl(max(num),0) from guestbook
+	</select>
+	
+   <insert id="insert" parameterType="Message">
+     insert into guestbook(num, writerid, content, otherid) 
+     values (#{num}, #{writerid}, #{content}, #{otherid} )
+   </insert>
+	
+	<select id="select" resultType="Message" parameterType="hashmap">
+		select * from guestbook where num = #{num}
+	</select>
+
+	<select id="selectCount" resultType="int" parameterType="hashmap">
+		select nvl(count(*),0) from guestbook where otherid=#{receiverid}
+	</select>
+
+	<select id="selectList" resultType="MessageList" parameterType="hashmap">
+		select * from (select rownum rnum ,a.* 
+		from(select num, writerid, name,content,profile, background 
+		from member m, guestbook g 
+		where m.memberid=g.writerid 
+		and otherid=#{memberid} order by num desc)a ) 
+		where rnum  between #{startRow} and #{endRow}
+	</select>
+	
+    <delete id="deleteMessage" parameterType="hashmap" >
+ 	  delete from guestbook where num =#{num} 
+    </delete> 
+   
+   
+</mapper>
