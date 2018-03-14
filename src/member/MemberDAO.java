@@ -6,129 +6,81 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.session.SqlSession;
 
 import board.BoardDataBean;
+import util.MybatisConnector;
 
 
-public class MemberDAO {
+public class MemberDAO extends MybatisConnector{
+	
+	
+	private static MemberDAO messageDao = new MemberDAO();
+	public static MemberDAO getInstance() {
+		return messageDao;
+	}
+	private MemberDAO() {}
+    private final String namespace="ldg.mybatis";
+    SqlSession sqlSession;
+    
+    
 	public int updateArticle(MemberVO article) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		int updateCount = 0;
-
-		try {
-			conn = getConnection();
-			String sql = "update member set sch_emt=?, sch_mid=?,sch_high=? where memberid=?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, article.getSch_emt());
-			pstmt.setString(2, article.getSch_mid());
-			pstmt.setString(3, article.getSch_high());
-			pstmt.setString(4, article.getMemberid());
-			updateCount = pstmt.executeUpdate();
-
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(conn, pstmt, null);
-		}
+		sqlSession=sqlSession();
+		int updateCount = sqlSession.update(namespace+".updateArticle", article);
+		sqlSession.commit();
+		sqlSession.close();
 		return updateCount;
 	}
 	
 	//회원 탈퇴
 	public void deleteArticle(String memberid) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection();
-			String sql = "delete from member where memberid=?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, memberid);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(conn, pstmt, null);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("memberid", memberid);
+		sqlSession.update(namespace+".deleteArticle", map);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
 	
 	public int login(String memberid, String password) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
 		String sql = "SELECT password FROM member WHERE memberid=?";
-		try{
-			conn = getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, memberid);
-			rs=pstmt.executeQuery();
-			if(rs.next()) {
-				if(rs.getString(1).equals(password)) {
-					return 1;	//로그인 성공
-				}
-				else {
-					return 0;	//비밀번호 불일치
-				}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("memberid", memberid);
+		map.put("password", password);
+		String chk=sqlSession.selectOne(namespace+".login",map);
+		if(chk!=null) {
+			if(chk.equals(password)) {
+				return 1;	//로그인 성공
 			}
-			return -1; //아이디가 없다
-		}catch(Exception e) {
-			e.printStackTrace();
+			else {
+				return 0;	//비밀번호 불일치
+			}
 		}
-		return -2; //데이터베이스 오류
+		sqlSession.close();
+			return -1; //아이디가 없다
 	}
 	
 	//회원등록 메소드
 	public void insertMember(MemberVO member) {
-		Connection con = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "";
-		try {
-			sql = "insert into member(memberid, password,name,birthday,sch_emt,sch_mid,sch_high,";
-			sql += " joindate, point, emtid, midid, highid) values(?,?,?,?,?,?,?,sysdate,?,?,?,?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, member.getMemberid());
-			pstmt.setString(2, member.getPassword());
-			pstmt.setString(3, member.getName());
-			pstmt.setInt(4, member.getBirthday());
-			pstmt.setString(5, member.getSch_emt());
-			pstmt.setString(6, member.getSch_mid());
-			pstmt.setString(7, member.getSch_high());
-			pstmt.setInt(8, 10);
-			pstmt.setString(9, member.getEmtid());
-			pstmt.setString(10, member.getMidid());
-			pstmt.setString(11, member.getHighid());
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(con, pstmt, rs);
-		}
-
+		sqlSession=sqlSession();
+		sqlSession.insert(namespace+".insertMember",member);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
 	
 	//친구관계 테이블에 회원 추가
-	public void requestFriend(relationVO article) {
-		Connection con = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "";
-		int number = 0;
-		try {
-			sql = "insert into relation(myid, otherid, status) values(?,?,?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, article.getMyId());
-			pstmt.setString(2, article.getOtherId());
-			pstmt.setInt(3, 1);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(con, pstmt, rs);
-		}
-
+	public void requestFriend(relationVO rel) {
+		sqlSession=sqlSession();
+		sqlSession.insert(namespace+".requestFriend",rel);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
 	//친구요청보내기

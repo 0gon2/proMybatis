@@ -8,8 +8,8 @@
    <typeAlias type="guestbook.MessageVO" alias="Message"/>
    <typeAlias type="guestbook.ListVO" alias="MessageList"/>
    <typeAlias type="member.MemberVO" alias="Member"/>
- <!--   <typeAlias type="member.relationVO" alias="Relation"/>
-   <typeAlias type="school.SchoolVO" alias="School"/> -->
+    <typeAlias type="member.relationVO" alias="Relation"/>
+  <!-- <typeAlias type="school.SchoolVO" alias="School"/> -->
    </typeAliases> 
    <!--  -->
    <environments default="development">

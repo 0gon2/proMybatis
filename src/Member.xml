@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ldg.mybatis">
-<!-- 	update delete SELECT insert insert insert update update update(조건) select 
+<!-- 	 insert update update update(조건) select 
         select select select select(조건) SELECT SELECT select select(조건) select(조건) SELECT(조건)
         select select select select select -->
 	<update id="updateArticle" parameterType="Member">
@@ -14,6 +14,28 @@
 	<delete id="deleteArticle" parameterType="hashmap" >
  	  delete from member where memberid=#{memberid}
    </delete> 
+	
+	<select id="login" resultType="int" parameterType="hashmap">
+		select password from member where memberid=#{memberid}
+	</select>
+	
+	
+	<insert id="insertMember" parameterType="Member">
+	insert into member(memberid, password,name,
+	birthday,sch_emt,sch_mid,sch_high, joindate, 
+	point, emtid, midid, highid) 
+	values(#{memberid},#{password},#{name},#{birthday},
+	#{sch_emt},#{sch_mid},#{sch_high},
+	sysdate,#{point},#{emtid},#{midid},#{highid})";
+    </insert>
+	
+	<insert id="insertMember" parameterType="Relation">
+	insert into relation(myid, otherid, status) 
+	values(#{myid},#{otherid},#{status})
+    </insert>
+	
+	
+	
 	
 	
 	<select id="getArticleCount" resultType="int" parameterType="hashmap">
