@@ -1,4 +1,4 @@
-package member;
+package old;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,7 +11,36 @@ import java.util.List;
 import board.BoardDataBean;
 
 
-public class MemberDAO {
+
+
+
+public class oldMemberDAO {
+	// 싱글턴 메소드(1)
+	private static oldMemberDAO instance = new oldMemberDAO();
+
+	private oldMemberDAO() {
+
+	}
+
+	public static oldMemberDAO getInstance() {
+		return instance;
+	}
+	//커넥션 연결 메소드(1)
+	public static Connection getConnection() {
+		Connection con = null;
+		try {
+			String jdbcUrl = "jdbc:oracle:thin:@localhost:1521:orcl";
+			String dbId = "scott";
+			String dbPass = "tiger";
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			con = DriverManager.getConnection(jdbcUrl, dbId, dbPass);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		return con;
+	}
+	//학교정보 수정
 	public int updateArticle(MemberVO article) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -51,8 +80,31 @@ public class MemberDAO {
 			close(conn, pstmt, null);
 		}
 	}
+
+	// 커넥션 해제 메소드(1)
+	public void close(Connection con, PreparedStatement pstmt, ResultSet rs) {
+		if (rs != null)
+			try {
+				pstmt.close();
+			} catch (SQLException ex) {
+
+			}
+		if (pstmt != null)
+			try {
+				pstmt.close();
+			} catch (SQLException ex) {
+
+			}
+		if (con != null)
+			try {
+				con.close();
+			} catch (SQLException ex) {
+
+			}
+
+	}
 	
-	
+	//로그인
 	public int login(String memberid, String password) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -107,8 +159,6 @@ public class MemberDAO {
 		}
 
 	}
-	
-	
 	//친구관계 테이블에 회원 추가
 	public void requestFriend(relationVO article) {
 		Connection con = getConnection();
@@ -225,7 +275,7 @@ public class MemberDAO {
 			close(conn, pstmt, null);
 		}
 	}
-
+	
 	public String identifyRequest(String myId, String otherid) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -252,7 +302,6 @@ public class MemberDAO {
 		return statement;
 	}
 	
-
 	public String getProfile(String memberid) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -275,9 +324,6 @@ public class MemberDAO {
 		}
 		return profile;
 	}
-	
-	
-	
 	public String getBackground(String memberid) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -301,6 +347,8 @@ public class MemberDAO {
 		}
 		return background;
 	}
+	
+	
 	
 	public String getStatus(String myId, String otherid) {
 		Connection con = null;
@@ -329,7 +377,7 @@ public class MemberDAO {
 		}
 		return status;
 	}
-
+	
 	//학교 명단 추출하는 메소드
 	@SuppressWarnings("resource")
 	public List getSchoolmate(int startRow, int endRow, String emtid,
@@ -402,7 +450,7 @@ public class MemberDAO {
 		}
 		return articleList;
 	}
-
+	
 	public List reqList(String id) {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
@@ -471,7 +519,6 @@ public class MemberDAO {
 		return articleList;
 	}
 	//회원전체 리스트 
-	
 	public List getAllmember(int startRow, int endRow) {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
@@ -512,8 +559,6 @@ public class MemberDAO {
 		return articleList;
 	}
 	//동창 인원수 체크
-	
-	
 	@SuppressWarnings("resource")
 	public int getSchoolmateCount(String sclass, String emtid, String midid, String highid) {
 		Connection con = null;
@@ -559,7 +604,6 @@ public class MemberDAO {
 		}
 		return number;
 	}
-
 	public List findFriendList(int startRow, int endRow, String name, String sclass, String emtid, String midid, String highid ) {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
@@ -634,9 +678,6 @@ public class MemberDAO {
 		}
 		return articleList;
 	}
-	
-	
-
 	@SuppressWarnings("resource")
 	public int findFriendCount(String sclass, String name, String emtid, String midid, String highid) {
 		Connection con = null;
@@ -711,7 +752,8 @@ public class MemberDAO {
 		}
 		return number;
 	}
-
+	
+	
 	//전체 회원 수 카운팅
 	public int getMemberCount() {
 		Connection con = null;
@@ -736,7 +778,6 @@ public class MemberDAO {
 		return number;
 	}
 
-	
 	
 	public MemberVO getUserInfo(String memberid) {
 		Connection conn = getConnection();
@@ -768,7 +809,7 @@ public class MemberDAO {
 		return article;
 	}
 	
-
+	
 	
 	public BoardDataBean getHot() {
 		Connection conn = getConnection();
@@ -794,7 +835,6 @@ public class MemberDAO {
 		return article;
 	}
 	//학교 id를 가지고 오는 메소드
-	
 	public MemberVO getSchoolId(String memberid) {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
