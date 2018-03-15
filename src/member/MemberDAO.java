@@ -195,97 +195,46 @@ public class MemberDAO extends MybatisConnector{
 		sqlSession.close();
 		return li;
 	}
-	//회원전체 리스트 여기까지~~~~~~~~~~~~~~
+	
+	
+	
 	
 	public List getAllmember(int startRow, int endRow) {
-		Connection conn = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List articleList = null;
-		String sql = "";
-		try {
-			conn = getConnection();
-			sql = " select * from (select rownum rnum ,a.* from "
-					+ "(select *"
-					+ " from member order by joindate desc) "
-					+ "	a ) where rnum  between ? and ? ";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				articleList = new ArrayList();
-				do {
-					MemberVO article = new MemberVO();
-					article.setMemberid(rs.getString("memberid"));
-					article.setPassword(rs.getString("password"));
-					article.setName(rs.getString("name"));
-					article.setBirthday(rs.getInt("birthday"));
-					article.setJoindate(rs.getDate("joindate"));
-					article.setSch_emt(rs.getString("sch_emt"));
-					article.setSch_mid(rs.getString("sch_mid"));
-					article.setSch_high(rs.getString("sch_high"));
-					articleList.add(article);
-				} while (rs.next());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(conn, pstmt, rs);
-		}
-		return articleList;
+		sqlSession=sqlSession();
+		Map<String, Integer> map = new HashMap<>();
+		map.put("startRow", startRow);
+		map.put("endRow", endRow);
+		List li=sqlSession.selectList(namespace+".getAllmember",map);
+		sqlSession.close();
+		return li;
 	}
 	//동창 인원수 체크
 	
 	
-	@SuppressWarnings("resource")
-	public int getSchoolmateCount(String sclass, String emtid, String midid, String highid) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql=null;
-		int number = 0;
-		try {
-			con=getConnection();
+	public int getSchoolmateCount(String sclass, 
+			String emtid, String midid, String highid) {
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("emtid", emtid);
+		map.put("midid", midid);
+		map.put("highid", highid);
+		int number=0;
 			if(sclass.equals("초등학교")) {
-				sql = "select nvl(count(*),0) from "
-						+ "(SELECT m.name, m.birthday,m.joindate " + 
-						"from MEMBER m, SCHOOL s "
-						+ "where m.emtid=s.sid and sid=?)";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, emtid);
+				number=sqlSession.selectOne(namespace+".emtCount",map);
 			}
 			if(sclass.equals("중학교")) {
-				sql = "select nvl(count(*),0) from "
-						+ "(SELECT m.name, m.birthday,m.joindate " + 
-						"from MEMBER m, SCHOOL s "
-						+ "where m.midid=s.sid and sid=?)";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, midid);
+				number=sqlSession.selectOne(namespace+".midCount",map);
 			}
 			if(sclass.equals("고등학교")) {
-				sql = "select nvl(count(*),0) from "
-						+ "(SELECT m.name, m.birthday,m.joindate " + 
-						"from MEMBER m, SCHOOL s "
-						+ "where m.highid=s.sid and sid=?)";
-				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, highid);
+				number=sqlSession.selectOne(namespace+".highCount",map);
 			}
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				number = rs.getInt(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-
-			close(con, pstmt, rs);
-		}
+			sqlSession.close();
 		return number;
 	}
-
-	public List findFriendList(int startRow, int endRow, String name, String sclass, String emtid, String midid, String highid ) {
+ /*여기까지~~~~~*/
+	public List findFriendList(int startRow, int endRow, 
+			String name, String sclass, String emtid, 
+			String midid, String highid ) {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;

@@ -4,7 +4,8 @@
 
 <mapper namespace="ldg.mybatis">
 <!-- 	 insert update update update(조건) select 
-        select select select select(조건) SELECT SELECT select select(조건) select(조건) SELECT(조건)
+        select select select select(조건) SELECT SELECT select 
+        select(조건) select(조건) SELECT(조건)
         select select select select select -->
 	<update id="updateArticle" parameterType="Member">
 		update member set sch_emt=#{sch_emt}, sch_mid=#{sch_mid},sch_high=#{sch_high} 
@@ -110,6 +111,31 @@
 	MEMBERID in (SELECT myid from relation where otherid=#{id} AND status=2)
 	</select>
 	
+	<select id="getAllmember" resultType="Member" parameterType="hashmap">
+		select * from (select rownum rnum ,a.* from 
+		(select * from member order by joindate desc)a ) 
+		where rnum  between #{startRow} and #{endRow}
+	</select>
 		
+	<select id="emtCount" resultType="int" parameterType="hashmap">
+	select nvl(count(*),0) from 
+	(SELECT m.name, m.birthday,m.joindate 
+	from MEMBER m, SCHOOL s 
+	where m.emtid=s.sid and sid=#{emtid})
+	</select>	
+	
+	<select id="midCount" resultType="int" parameterType="hashmap">
+	select nvl(count(*),0) from 
+	(SELECT m.name, m.birthday,m.joindate 
+	from MEMBER m, SCHOOL s 
+	where m.midid=s.sid and sid=#{midid})
+	</select>
+	
+	<select id="highCount" resultType="int" parameterType="hashmap">
+	select nvl(count(*),0) from 
+	(SELECT m.name, m.birthday,m.joindate 
+	from MEMBER m, SCHOOL s 
+	where m.highid=s.sid and sid=#{highid})
+	</select>
 	
 </mapper>
