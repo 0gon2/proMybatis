@@ -9,6 +9,7 @@
    <typeAlias type="guestbook.ListVO" alias="MessageList"/>
    <typeAlias type="member.MemberVO" alias="Member"/>
     <typeAlias type="member.relationVO" alias="Relation"/>
+    <typeAlias type="member.SmemberVO" alias="Smember"/>
   <!-- <typeAlias type="school.SchoolVO" alias="School"/> -->
    </typeAliases> 
    <!--  -->

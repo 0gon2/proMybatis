@@ -27,7 +27,6 @@ public class MemberDAO extends MybatisConnector{
     private final String namespace="ldg.mybatis";
     SqlSession sqlSession;
     
-    
 	public int updateArticle(MemberVO article) {
 		sqlSession=sqlSession();
 		int updateCount = sqlSession.update(namespace+".updateArticle", article);
@@ -46,7 +45,6 @@ public class MemberDAO extends MybatisConnector{
 		sqlSession.close();
 	}
 	
-	
 	public int login(String memberid, String password) {
 		String sql = "SELECT password FROM member WHERE memberid=?";
 		sqlSession=sqlSession();
@@ -55,15 +53,11 @@ public class MemberDAO extends MybatisConnector{
 		map.put("password", password);
 		String chk=sqlSession.selectOne(namespace+".login",map);
 		if(chk!=null) {
-			if(chk.equals(password)) {
-				return 1;	//로그인 성공
-			}
-			else {
-				return 0;	//비밀번호 불일치
-			}
+			if(chk.equals(password)) {return 1;}
+			else {return 0;}
 		}
 		sqlSession.close();
-			return -1; //아이디가 없다
+			return -1; 
 	}
 	
 	//회원등록 메소드
@@ -74,7 +68,6 @@ public class MemberDAO extends MybatisConnector{
 		sqlSession.close();
 	}
 	
-	
 	//친구관계 테이블에 회원 추가
 	public void requestFriend(relationVO rel) {
 		sqlSession=sqlSession();
@@ -82,347 +75,127 @@ public class MemberDAO extends MybatisConnector{
 		sqlSession.commit();
 		sqlSession.close();
 	}
-	
 	//친구요청보내기
 	public void addRequest(String myId ,String otherId) {
-		Connection con = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "";
-		try {
-			sql = "insert into relation(myid, otherid, status) values(?,?,?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, myId);
-			pstmt.setString(2, otherId);
-			pstmt.setInt(3, 1);
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(con, pstmt, rs);
-		}
-
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("myid", myId);
+		map.put("otherId", otherId);
+		map.put("status", "1");
+		sqlSession.insert(namespace+".addRequest",map);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
 	public void acceptRequest(String myId, String otherId) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-			String sql = "update relation set status=2 "
-					+ "where (myid=? and otherid=?) or (myid=? and otherid=?) ";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, myId);
-			pstmt.setString(2, otherId);
-			pstmt.setString(3, otherId);
-			pstmt.setString(4, myId);
-			pstmt.executeUpdate();
-
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(conn, pstmt, null);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("myid", myId);
+		map.put("otherId", otherId);
+		sqlSession.update(namespace+".acceptRequest",map);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
 	public void listUpdate(MemberVO member) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn = getConnection();
-			String sql = "update member set sch_emt=?, sch_mid=?,sch_high=? where memberid=?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, member.getSch_emt());
-			pstmt.setString(2, member.getSch_mid());
-			pstmt.setString(3, member.getSch_high());
-			pstmt.setString(4, member.getMemberid());
-			pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(conn, pstmt, null);
-		}
+		sqlSession=sqlSession();
+		sqlSession.update(namespace+".listUpdate", member);
+		sqlSession.commit();
+		sqlSession.close();
 	}
 	
-	public void profileUpload(MemberVO member,String memberid, int chk) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		String sql="";
-		try {
-			conn = getConnection();
+	public void profileUpload(MemberVO member, int chk) {
+		sqlSession=sqlSession();
 			if(chk==0) {
-				sql = "update member set profile=?, prosize=? "
-						+ "where memberid=? ";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, member.getProfile());
-				pstmt.setInt(2, member.getProsize());
-				pstmt.setString(3, memberid);
-				pstmt.executeUpdate();
+				sqlSession.update(namespace+".profileUpload", member);
 			}
 			else{
-				sql = "update member set background=?, backsize=? "
-						+ "where memberid=? ";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, member.getBackground());
-				pstmt.setInt(2, member.getBacksize());
-				pstmt.setString(3, memberid);
-				pstmt.executeUpdate();
+				sqlSession.update(namespace+".backgroundUpload", member);
 			}
-
-		} catch (Exception e) {
-			e.getStackTrace();
-		} finally {
-			close(conn, pstmt, null);
-		}
+			sqlSession.commit();
+			sqlSession.close();
 	}
 
 	public String identifyRequest(String myId, String otherid) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql=null;
-		String statement = null;
-		try {
-			con=getConnection();
-			sql = "select myid from relation where myid=? and otherid=?"
-					+ " and status=1";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, myId);
-			pstmt.setString(2, otherid);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				statement = rs.getString(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-
-			close(con, pstmt, rs);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("myid", myId);
+		map.put("otherid", otherid);
+		String statement=sqlSession.selectOne(namespace+".identifyRequest",map);
+		sqlSession.close();
 		return statement;
 	}
 	
-
 	public String getProfile(String memberid) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql=null;
-		String profile = null;
-		try {
-			con=getConnection();
-			sql = "select profile from member where memberid=? ";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, memberid);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				profile = rs.getString(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(con, pstmt, rs);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("memberid", memberid);
+		String profile=sqlSession.selectOne(namespace+".getProfile",map);
+		sqlSession.close();
 		return profile;
 	}
 	
-	
-	
 	public String getBackground(String memberid) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql=null;
-		String background = null;
-		try {
-			con=getConnection();
-			sql = "select background from member where memberid=? ";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, memberid);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				background = rs.getString(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-
-			close(con, pstmt, rs);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("memberid", memberid);
+		String background=sqlSession.selectOne(namespace+".getBackground",map);
+		sqlSession.close();
 		return background;
 	}
 	
 	public String getStatus(String myId, String otherid) {
-		Connection con = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql=null;
-		String status = null;
-		try {
-			con=getConnection();
-			sql = "select status from relation where (myid=? and otherid=?) or"
-					+ "(myid=? and otherid=?)";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, myId);
-			pstmt.setString(2, otherid);
-			pstmt.setString(3, otherid);
-			pstmt.setString(4, myId);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				status = rs.getString(1);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-
-			close(con, pstmt, rs);
-		}
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("myId", myId);
+		map.put("otherid", otherid);
+		String status=sqlSession.selectOne(namespace+".getStatus",map);
+		sqlSession.close();
 		return status;
 	}
 
 	//학교 명단 추출하는 메소드
-	@SuppressWarnings("resource")
 	public List getSchoolmate(int startRow, int endRow, String emtid,
 			String midid, String highid, String sclass) {
-		Connection conn = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List articleList = null;
-		String sql = "";
-		
-		try {
-			conn = getConnection();
+		sqlSession=sqlSession();
+		Map map = new HashMap<>();
+		map.put("startRow", startRow);
+		map.put("endRow", endRow);
+		map.put("emtid", emtid);
+		map.put("midid", midid);
+		map.put("highid", highid);
+		List li = null;
 			if(sclass.equals("초등학교")) {
-				sql = " select * from (select rownum rnum ,a.* from "
-						+ "(select m.name, m.birthday,m.joindate, m.memberid, "
-						+ "m.sch_emt, m.sch_mid, m.sch_high"
-						+ " from MEMBER m, SCHOOL s where m.emtid=s.sid and sid=? "
-						+ "order by joindate desc) "
-						+ "	a ) where rnum  between ? and ? ";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, emtid);
-				pstmt.setInt(2, startRow);
-				pstmt.setInt(3, endRow);
-				
+				li=sqlSession.selectList(namespace+".getEmtmate",map);
 			}
 			if(sclass.equals("중학교")) {
-				sql = " select * from (select rownum rnum ,a.* from "
-						+ "(select m.name, m.birthday,m.joindate, m.memberid, "
-						+ "m.sch_emt, m.sch_mid, m.sch_high"
-						+ " from MEMBER m, SCHOOL s where m.midid=s.sid and sid=? "
-						+ "order by joindate desc) "
-						+ "	a ) where rnum  between ? and ? ";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, midid);
-				pstmt.setInt(2, startRow);
-				pstmt.setInt(3, endRow);
+				li=sqlSession.selectList(namespace+".getMidmate",map);
 			}
 			if(sclass.equals("고등학교")) {
-				sql = " select * from (select rownum rnum ,a.* from "
-						+ "(select m.name, m.birthday,m.joindate, m.memberid, "
-						+ "m.sch_emt, m.sch_mid, m.sch_high"
-						+ " from MEMBER m, SCHOOL s where m.highid=s.sid and sid=? "
-						+ "order by joindate desc) "
-						+ "	a ) where rnum  between ? and ? ";
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, highid);
-				pstmt.setInt(2, startRow);
-				pstmt.setInt(3, endRow);
+				li=sqlSession.selectList(namespace+".getHighmate",map);
 			}
-		
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				articleList = new ArrayList();
-				do {
-					SmemberVO article = new SmemberVO();
-					article.setName(rs.getString("name"));
-					article.setBirthday(rs.getInt("birthday"));
-					article.setJoindate(rs.getDate("joindate"));
-					article.setMemberid(rs.getString("memberid"));
-					article.setSch_emt(rs.getString("sch_emt"));
-					article.setSch_mid(rs.getString("sch_mid"));
-					article.setSch_high(rs.getString("sch_high"));
-					articleList.add(article);
-				} while (rs.next());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(conn, pstmt, rs);
-		}
-		return articleList;
+		sqlSession.close();
+		return li;
 	}
-
 	public List reqList(String id) {
-		Connection conn = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List articleList = null;
-		String sql = "";
-		try {
-			conn = getConnection();
-			sql = " SELECT name, memberid from MEMBER, RELATION "
-				+ "where myid=memberid and status=1 and otherid=?";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				articleList = new ArrayList();
-				do {
-					MemberVO article = new MemberVO();
-					article.setName(rs.getString("name"));
-					article.setMemberid(rs.getString("memberid"));
-					articleList.add(article);
-				} while (rs.next());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(conn, pstmt, rs);
-		}
-		return articleList;
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("id", id);
+		List li=sqlSession.selectList(namespace+".reqList",map);
+		sqlSession.close();
+		return li;
 	}
+
 	
 	public List friendList(String id) {
-		Connection conn = getConnection();
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		List articleList = null;
-		String sql = "";
-		try {
-			conn = getConnection();
-			sql = " SELECT name, memberid FROM MEMBER WHERE "
-					+ "MEMBERID in "
-					+ "(SELECT otherid from relation "
-					+ "where myid=? AND status=2) OR "
-					+ "MEMBERID in "
-					+ "(SELECT myid from relation "
-					+ "where otherid=? AND status=2)";
-			
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.setString(2, id);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				articleList = new ArrayList();
-				do {
-					MemberVO article = new MemberVO();
-					article.setName(rs.getString("name"));
-					article.setMemberid(rs.getString("memberid"));
-					articleList.add(article);
-				} while (rs.next());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(conn, pstmt, rs);
-		}
-		return articleList;
+		sqlSession=sqlSession();
+		Map<String, String> map = new HashMap<>();
+		map.put("id", id);
+		List li=sqlSession.selectList(namespace+".friendList",map);
+		sqlSession.close();
+		return li;
 	}
-	//회원전체 리스트 
+	//회원전체 리스트 여기까지~~~~~~~~~~~~~~
 	
 	public List getAllmember(int startRow, int endRow) {
 		Connection conn = getConnection();

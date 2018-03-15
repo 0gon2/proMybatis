@@ -29,81 +29,87 @@
 	sysdate,#{point},#{emtid},#{midid},#{highid})";
     </insert>
 	
-	<insert id="insertMember" parameterType="Relation">
+	<insert id="requestFriend" parameterType="Relation">
 	insert into relation(myid, otherid, status) 
 	values(#{myid},#{otherid},#{status})
     </insert>
 	
 	
+    <insert id="addRequest" parameterType="hashmap">
+	insert into relation(myid, otherid, status) values(#{myid},#{otherid},#{status})
+    </insert>
 	
-	
-	
-	<select id="getArticleCount" resultType="int" parameterType="hashmap">
-		select password from member where memberid=#{memberid}
-	</select>
-	
-	
-	
-	<select id="boardList" resultType="Board" parameterType="hashmap">
-		select * from board
-		<if test="num!=null">
-			WHERE num = #{num}
-		</if>
-		<if test="boardid!=null">
-			WHERE boardid=#{boardid}
-		</if>
-	</select>
-	
-	<select id="getArticleCount" resultType="int" parameterType="hashmap">
-		select nvl(count(*),0) from board
-		<if test="num!=null">
-			WHERE num = #{num}
-		</if>
-		<if test="boardid!=null">
-			WHERE boardid=#{boardid}
-		</if>
-	</select>
-	
-	<select id="getArticles" resultType="Board" parameterType="hashmap">
-		select * from (select rownum rnum ,a.* from (select num,writer,email,subject,passwd,
-					reg_date,readcount,ref,re_step,re_level,content,
-					ip from board where boardid = #{boardid} order by ref desc , re_step) 
-					a ) where rnum  between #{startRow} and #{endRow}
-	</select>
-	
-	<select id="getNextNumber" resultType="int">
-		select boardser.nextval from dual
-	</select>
-	
-	<update id="updateRe_step" parameterType="Board">
-		update board set re_step=re_step+1 where ref=#{ref} and re_step>#{re_step}
-		 and boardid = #{boardid} 
+	<update id="acceptRequest" parameterType="hashmap">
+		update relation set status=2 
+		where (myid=#{myId} and otherid=#{otherId}) or (myid=#{otherId} and otherid=#{myId}) 
 	</update>
 	
-	<insert id="insertBoard" parameterType="Board">
-      insert into board(num, writer, email, subject, passwd, reg_date, ref, re_step, 
-      re_level, content,  boardid, filename, filesize, ip)
-      values(#{num},#{writer},#{email},#{subject},#{passwd}, sysdate, 
-      #{ref},#{re_step},#{re_level},#{content},#{boardid},#{filename},#{filesize}, #{ip})
-   </insert>
+	<update id="listUpdate" parameterType="Member">
+		update member set sch_emt=#{sch_emt}, sch_mid=#{sch_mid},sch_high=#{sch_high} 
+		where memberid=#{memberid} 
+	</update>
 	
-	<update id="addReadCount" parameterType="hashmap">
-		update board set readcount = readcount +1 where num=#{num} and boardid =#{boardid}
+	
+	<update id="profileUpload" parameterType="Member">
+		update member set profile=#{profile}, 
+		prosize=#{prosize} where memberid=#{memberid} 
 	</update>
+		
+	<update id="backgroundUpload" parameterType="Member">
+		update member set background=#{background}, backsize=#{background} 
+		where memberid=#{memberid}
+	</update>	
    
-	<select id="getArticle" resultType="Board" parameterType="hashmap">
-		select * from board where num =#{num} and boardid =#{boardid}
+   <select id="identifyRequest" resultType="String" parameterType="hashmap">
+	   select myid from relation where myid=#{myId} and otherid=#{otherid} and status=1
 	</select>
-					
-	<update id="updateArticle" parameterType="Board">
-		update board set writer=#{writer}, email=#{email},subject=#{subject},
-		content=#{content} where num=#{num} and passwd=#{passwd}
-	</update>
-   
-   <delete id="deleteArticle" parameterType="hashmap" >
- 	  delete from board where num=#{num} and passwd=#{passwd} 
-   </delete> 
-   
-   
-   
+	
+	<select id="getProfile" resultType="String" parameterType="hashmap">
+	 select profile from member where memberid=#{memberid} 
+	</select>
+	
+	<select id="getBackground" resultType="String" parameterType="hashmap">
+	select background from member where memberid=#{memberid}
+	</select>
+	
+   <select id="getStatus" resultType="String" parameterType="hashmap">
+	select status from relation where (myid=#{myId} and otherid=#{otherid}) 
+	or (myid=#{otherid} and otherid=#{myId})
+	</select>
+	
+	<select id="getEmtmate" resultType="Smember" parameterType="hashmap">
+	 select * from (select rownum rnum ,a.* from 
+	 (select m.name, m.birthday,m.joindate, m.memberid,
+	 m.sch_emt, m.sch_mid, m.sch_high from MEMBER m, 
+	 SCHOOL s where m.emtid=s.sid and sid=#{emtid} order by joindate desc) 
+	 a ) where rnum  between #{startRow} and #{endRow}
+	</select>
+	<select id="getMidmate" resultType="Smember" parameterType="hashmap">
+	sql = " select * from (select rownum rnum ,a.* from 
+	(select m.name, m.birthday,m.joindate, m.memberid, 
+	m.sch_emt, m.sch_mid, m.sch_high from MEMBER m,
+	SCHOOL s where m.midid=s.sid and sid=#{midid} order by joindate desc) 
+	a ) where rnum  between #{startRow} and #{endRow}
+	</select>
+	<select id="getHighmate" resultType="Smember" parameterType="hashmap">
+	select * from (select rownum rnum ,a.* from 
+	(select m.name, m.birthday,m.joindate, m.memberid,
+	m.sch_emt, m.sch_mid, m.sch_high from MEMBER m, 
+	SCHOOL s where m.highid=s.sid and sid=#{highid} 
+	order by joindate desc)a ) where rnum  between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="reqList" resultType="Member" parameterType="hashmap">
+	SELECT name, memberid from MEMBER, RELATION
+	where myid=memberid and status=1 and otherid=#{id}
+	</select>
+	
+	<select id="friendList" resultType="Member" parameterType="hashmap">
+	SELECT name, memberid FROM MEMBER WHERE MEMBERID in 
+	(SELECT otherid from relation where myid=#{id} AND status=2) OR 
+	MEMBERID in (SELECT myid from relation where otherid=#{id} AND status=2)
+	</select>
+	
+		
+	
 </mapper>
