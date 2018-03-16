@@ -264,7 +264,7 @@ public class ProjectController extends Action {
 		
 		BoardDBBean dbPro = BoardDBBean.getInstance();
 		article.setIp(request.getRemoteAddr());
-		int deleteCount = dbPro.deleteArticle(num,passwd,boardid);
+		int deleteCount = dbPro.deleteArticle(num,passwd);
 		request.setAttribute("pageNum", pageNum);
 		request.setAttribute("deleteCount", deleteCount);
 		return "/Replyboard/deletePro.jsp";
@@ -498,7 +498,6 @@ public class ProjectController extends Action {
 		String myBackground=null;
 		String otherProfile=null;
 		String otherBackground=null;
-		BoardDataBean hotarticle = dbPro.getHot();
 		
 		if(pageId.equals(myId)) {
 			String schemt=(String)session.getAttribute("schemt");
@@ -521,7 +520,6 @@ public class ProjectController extends Action {
 			request.setAttribute("aditmid", aditmid);
 			request.setAttribute("adithigh", adithigh);
 			request.setAttribute("pageId", pageId);
-			request.setAttribute("hotarticle", hotarticle);
 			return "/main/myPage.jsp"; 
 		}
 		else {
@@ -584,7 +582,6 @@ public class ProjectController extends Action {
 			request.setAttribute("name", name);
 			request.setAttribute("pageId", pageId);
 			
-			request.setAttribute("hotarticle", hotarticle);
 			request.setAttribute("aditemt", aditemt);
 			request.setAttribute("aditmid", aditmid);
 			request.setAttribute("adithigh", adithigh);
@@ -749,11 +746,12 @@ public class ProjectController extends Action {
            
 		}
 		MemberVO member = new MemberVO();
+		member.setMemberid(myId);
 		MemberDAO dbPro= MemberDAO.getInstance();
 		if(file[0]!=null){
 			member.setBackground(filename[0]);
 			member.setBacksize((int)file[0].length());
-			dbPro.profileUpload(member, myId,1);
+			dbPro.profileUpload(member,1);
 
 		}else {
 			member.setBackground("");
@@ -762,7 +760,7 @@ public class ProjectController extends Action {
 		if(file[1]!=null){
 			member.setProfile(filename[1]);
 	    	member.setProsize((int)file[1].length());
-	    	dbPro.profileUpload(member, myId,0);
+	    	dbPro.profileUpload(member,0);
 		}else {
 			member.setProfile("");
 			member.setProsize(0);

@@ -7,7 +7,7 @@
 
 <style>
 .w3-main{
-       background-image: url("/projectMVC/fileSave/${myBackground}");
+       background-image: url("/projectMybatis/fileSave/${myBackground}");
       background-attachment: fixed; 
       }
 
@@ -23,12 +23,12 @@ style="z-index:3;width:260px; margin-top:13px" id="mySidebar">
          <h4 class="w3-center">Profile</h4>
           <c:if test="${myProfile==null }">
          <p class="w3-center">
-         <img src="/projectMVC/images/defaultprofile.png" 
+         <img src="/projectMybatis/images/defaultprofile.png" 
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <c:if test="${myProfile!=null }">
          <p class="w3-center">
-         <img src="/projectMVC/fileSave/${myProfile}"  
+         <img src="/projectMybatis/fileSave/${myProfile}"  
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <hr>
@@ -105,11 +105,11 @@ style="cursor:pointer" title="close side menu" id="myOverlay"></div>
              <input type="hidden" name="num" value="${message.num}">
   	  	  </form> 
   	  	   <c:if test="${message.profile==null}">
-         <img src="/projectMVC/images/defaultprofile.png" 
+         <img src="/projectMybatis/images/defaultprofile.png" 
          class="w3-circle" style="height:55px;width:55px" >
          </c:if>
          <c:if test="${message.profile!=null }">
-         <img src="/projectMVC/fileSave/${message.profile}" 
+         <img src="/projectMybatis/fileSave/${message.profile}" 
          class="w3-circle" style="height:55px;width:55px" >
          </c:if>
 			        <c:if test="${message.name==name }">

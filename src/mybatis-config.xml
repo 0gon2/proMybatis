@@ -4,13 +4,13 @@
 <configuration>
    <!-- add -->
    <typeAliases>
-  <!--  <typeAlias type="board.BoardDataBean" alias="Board"/> -->
+   <typeAlias type="board.BoardDataBean" alias="Board"/> 
    <typeAlias type="guestbook.MessageVO" alias="Message"/>
    <typeAlias type="guestbook.ListVO" alias="MessageList"/>
    <typeAlias type="member.MemberVO" alias="Member"/>
     <typeAlias type="member.relationVO" alias="Relation"/>
     <typeAlias type="member.SmemberVO" alias="Smember"/>
-  <!-- <typeAlias type="school.SchoolVO" alias="School"/> -->
+   <typeAlias type="school.SchoolVO" alias="School"/> 
    </typeAliases> 
    <!--  -->
    <environments default="development">
@@ -26,8 +26,9 @@
    </environments>
    <!--config  -->
    <mappers>
-   		<!-- <mapper resource="Board.xml"/> -->
+   		<mapper resource="Board.xml"/> 
    		<mapper resource="Message.xml"/>
    		<mapper resource="Member.xml"/>
+   		<mapper resource="School.xml"/>
    </mappers>
 </configuration>

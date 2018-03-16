@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="ldg.mybatis">
+<mapper namespace="ldg.guest">
 	<select id="getMessageNum" resultType="int" parameterType="Message">
 		 select nvl(max(num),0) from guestbook
 	</select>

@@ -18,7 +18,7 @@
 				dbPro.deleteArticle((String)session.getAttribute("myId"));
 				session.invalidate();
 			%> 
-			location.href="/projectMVC/gon/loginForm";
+			location.href="/projectMybatis/gon/loginForm";
 		}
 	</script>
 </body>

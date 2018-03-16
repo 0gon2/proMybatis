@@ -8,7 +8,7 @@
 <title>Insert title here</title>
 <style>
 .w3-main{
-       background-image: url("/projectMVC/fileSave/${otherBackground}");
+       background-image: url("/projectMybatis/fileSave/${otherBackground}");
       background-attachment: fixed; 
       }
 
@@ -25,12 +25,12 @@ style="z-index:3;width:260px; margin-top:13px; " id="mySidebar">
          <h4 class="w3-center">Other Profile</h4>
         <c:if test="${otherProfile==null }">
          <p class="w3-center">
-         <img src="/projectMVC/images/defaultprofile.png" 
+         <img src="/projectMybatis/images/defaultprofile.png" 
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <c:if test="${otherProfile!=null }">
          <p class="w3-center">
-         <img src="/projectMVC/fileSave/${otherProfile}" 
+         <img src="/projectMybatis/fileSave/${otherProfile}" 
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> ${name }</p>
@@ -108,11 +108,11 @@ style="cursor:pointer" title="close side menu" id="myOverlay"></div>
              <input type="hidden" name="num" value="${message.num}">
   	  	  </form>
 			        <c:if test="${message.profile==null }">
-         <img src="/projectMVC/images/defaultprofile.png" 
+         <img src="/projectMybatis/images/defaultprofile.png" 
          class="w3-circle" style="height:55px;width:55px" >
          </c:if>
          <c:if test="${message.profile!=null }">
-         <img src="/projectMVC/fileSave/${message.profile}" 
+         <img src="/projectMybatis/fileSave/${message.profile}" 
          class="w3-circle" style="height:55px;width:55px" >
          </c:if>
 			        <c:if test="${message.name==name }">
@@ -165,7 +165,7 @@ style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 	            <c:if test="${statement==1}">
 		          <font size="3px" class="w3-center">&nbsp;&nbsp;|추가하기|</font>
 	            	<form action="mainPage">
-	            		<img alt="" src="/projectMVC/images/request.png" style="width:80%;height:150px;">
+	            		<img alt="" src="/projectMybatis/images/request.png" style="width:80%;height:150px;">
 	            		<input type="hidden" value="${pageId}" name="pageId">
 	            		<input type="hidden" value="1" name="addReq">
 	            		<input class="w3-button w3-blue w3-round" style="width:100%;" type="submit" value="친구추가">
@@ -173,13 +173,13 @@ style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 	            </c:if>
 	            <c:if test="${statement==2}">
 		          <font size="3px" class="w3-center">&nbsp;&nbsp;|기다리기|</font>
-	            	<img alt="" src="/projectMVC/images/wait.png" style="width:80%;height:150px;">
+	            	<img alt="" src="/projectMybatis/images/wait.png" style="width:80%;height:150px;">
 	            	<div class="w3-round w3-blue">요청대기중..</div>
 	            </c:if>
 	             <c:if test="${statement==3}">
 	            	 <font size="3px" class="w3-center">&nbsp;&nbsp;|친구 요청|</font>
 	            	<form action="mainPage">
-	            		<img alt="" src="/projectMVC/images/response.jpg" style="width:100%;height:150px;">
+	            		<img alt="" src="/projectMybatis/images/response.jpg" style="width:100%;height:150px;">
 	            		<input type="hidden" value="${pageId}" name="pageId">
 	            		<input type="hidden" value="1" name="acceptReq">
 	            		<input class="w3-button w3-blue w3-round" style="width:100%;" type="submit" value="수락하기">
@@ -187,7 +187,7 @@ style="cursor:pointer" title="close side menu" id="myOverlay"></div>
 	            </c:if>
 	             <c:if test="${statement==4}">
 	            	<font size="3px" class="w3-center">&nbsp;&nbsp;|친구|</font>
-	            	<img alt="" src="/projectMVC/images/friend.jpg" style="width:80%;height:150px;">
+	            	<img alt="" src="/projectMybatis/images/friend.jpg" style="width:80%;height:150px;">
 	            	<div class="w3-round w3-blue">친구 관계</div>
 	            </c:if>
 	            

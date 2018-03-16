@@ -17,7 +17,7 @@
 
 body {
    background-color: #ffffff;
-       background-image: url("/projectMVC/images/background.jpg");
+       background-image: url("/projectMybatis/images/background.jpg");
       background-size: cover;
       background-attachment: fixed;  
 }

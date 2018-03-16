@@ -108,12 +108,12 @@ style="z-index:3;width:260px; margin-top:13px" id="mySidebar">
          <h4 class="w3-center">Profile</h4>
          <c:if test="${profile==null }">
          <p class="w3-center">
-         <img src="/projectMVC/images/defaultprofile.png" 
+         <img src="/projectMybatis/images/defaultprofile.png" 
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <c:if test="${profile!=null }">
          <p class="w3-center">
-         <img src="/projectMVC/fileSave/${profile}" 
+         <img src="/projectMybatis/fileSave/${profile}" 
          class="w3-circle" style="height:130px;width:130px" ></p>
          </c:if>
          <hr>

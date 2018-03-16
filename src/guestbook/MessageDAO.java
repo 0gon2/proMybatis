@@ -15,13 +15,13 @@ public class MessageDAO extends MybatisConnector {
 		return messageDao;
 	}
 	private MessageDAO() {}
-    private final String namespace="ldg.mybatis";
+    private final String namespace="ldg.guest";
     SqlSession sqlSession;
 	
 	public int insert(MessageVO message) throws SQLException {
 		sqlSession=sqlSession();
 		int max=sqlSession.selectOne(namespace+".getMessageNum",message);
-		message.setNum(message.getNum()+1);
+		message.setNum(max+1);
 		sqlSession.insert(namespace+".insert",message);
 		sqlSession.commit();
 		sqlSession.close();

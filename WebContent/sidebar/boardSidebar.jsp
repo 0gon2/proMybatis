@@ -18,7 +18,7 @@
 .myMenu {margin-bottom:150px}
 html,body,h1,h2,h3,h4,h5 {font-family: "Jeju Hallasan", sans-serif}
 body{
-       background-image: url("/projectMVC/images/background.jpg");
+       background-image: url("/projectMybatis/images/background.jpg");
        font-family: "Jeju Hallasan", sans-serif
       }
 
@@ -29,8 +29,8 @@ body{
 <div class="w3-top" >
   <div class="w3-row w3-white">
     <div class="w3-half" style="margin:4px 0 5px 0">
-    <a href='/projectMVC/gon/mainPage'>
-    <img src='/projectMVC/images/top.jpg' alt='W3Schools.com' style="margin-left:10px;margin-top:10px"></a>
+    <a href='/projectMybatis/gon/mainPage'>
+    <img src='/projectMybatis/images/top.jpg' alt='W3Schools.com' style="margin-left:10px;margin-top:10px"></a>
     </div>
     <div class="w3-half w3-wide w3-hide-medium w3-hide-small" style="margin-top:25px">
     <div class="w3-right">WELLCOME TO GON'S WORLD </div></div>
@@ -40,7 +40,7 @@ body{
   <div class="w3-bar w3-blue" style="height:45px;z-index:4; ">
    <a class="w3-left" href="mainPage" 
    style="margin-top:10px; margin-left:15px; margin-right:20px">
-   <img src="/projectMVC/images/school1.png" ></a>
+   <img src="/projectMybatis/images/school1.png" ></a>
    
    <a class="w3-bar-item w3-button w3-hide-medium w3-hover-white" 
    href="mainPage" style="height:45px;font-size:18px;">메인</a>
